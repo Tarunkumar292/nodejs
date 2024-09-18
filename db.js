@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+require('dotenv').config();
 
 // Connect to MongoDB
 const mongoURL = 'mongodb://localhost:27017/company'; 

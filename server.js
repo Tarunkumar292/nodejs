@@ -106,6 +106,8 @@ app.use(express.json());
 const personroutes = require('./routes/personroutes');
 app.use('/person', personroutes);
 
+//dotenv
+require('dotenv').config();
 
 //get function
 // app.get('/', function (req, res) {
