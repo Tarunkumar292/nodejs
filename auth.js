@@ -1,21 +1,10 @@
 const express = require('express');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const session = require('express-session');
 const mongoose = require('mongoose');
 const Person = require('./models/person'); // Adjust the path as needed
 
 const app = express();
-
-// Session setup
-app.use(session({
-    secret: 'your_secret_key', // Change this to a strong secret
-    resave: false,
-    saveUninitialized: false
-}));
-
-app.use(passport.initialize());
-app.use(passport.session());
 
 // Passport Local Strategy
 passport.use(new LocalStrategy(async (username, password, done) => {
@@ -37,19 +26,25 @@ passport.use(new LocalStrategy(async (username, password, done) => {
     }
 }));
 
-// Serialize and deserialize user
-passport.serializeUser((user, done) => {
-    done(null, user.id);
+// Initialize Passport
+app.use(passport.initialize());
+
+// Define routes for authentication
+app.post('/login', passport.authenticate('local', {
+    successRedirect: '/success', // Adjust this route as needed
+    failureRedirect: '/login',   // Adjust this route as needed
+    failureFlash: true
+}));
+
+// Route to handle successful login
+app.get('/success', (req, res) => {
+    res.send('Login successful!');
 });
 
-passport.deserializeUser(async (id, done) => {
-    try {
-        const user = await Person.findById(id);
-        done(null, user);
-    } catch (err) {
-        done(err);
-    }
+// Route to handle login page
+app.get('/login', (req, res) => {
+    res.send('Login page');
 });
 
-// Export auth
-module.exports = passport;
+// Export app
+module.exports = app;
