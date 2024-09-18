@@ -1,111 +1,17 @@
-//functions
-
-// const { json } = require("express")
-
-// console.log('server is running');
-// function add(a,b){
-//     return a+b;
-// }
-
-// var add = function(a,b){
-//     return a+b
-// }
-
-// var add=(a,b)=>{
-//     return a+b
-// }
-
-// var add=(a,b)=>a+b
-// var result= add(4,5)
-// console.log(result);
-
-// (function(){
-//     console.log("tarun is developer");
-
-// })()
-
-//callback functions
-
-// function callback(){
-//     console.log("i am calling a callback function");
-//     console.log("i am learning the callback function");
-
-// }
-// const add = function(a,b,callback){
-//     var result=a+b;
-//     console.log('result:'+result);
-//     callback()
-// }
-// add(3,4,callback)
-
-// const add = function(a,b,callback){
-//         var result=a+b;
-//         console.log('result:'+result);
-//         callback()
-//     }
-// add(3,4,function(){
-//     console.log("add is completed"); 
-// })
-// add(2,3,()=>console.log("add completed"))
-
-// fs and os
-
-// var fs = require('fs');
-// var os = require('os');
-
-// var user = os.userInfo()
-// console.log(user);
-
-// fs.appendFile('greeting.txt',"hi user:"+user.username+"!\n",()=>{
-//     console.log("hi i am user");
-
-// })
-
-//import and connection of two and more js files
-// lodash
-
-// const notes = require('./notes.js');
-// var _ = require('lodash');
-
-// var age = notes.age
-// console.log(age);
-// var result = notes.addnumber(age+10,20)
-// console.log(result);
-
-// var data = ["person", "person", 1,2,1,'name','age','2']
-// var filter = _.uniq(data)
-// console.log(filter);
-// console.log(_.isString(4))
-
-// json conversion 
-// const object =  {
-//     name : "tarun",
-//     age : 24,
-//     work : "developer"
-// }
-// const json1 = JSON.stringify(object)
-// console.log(json1)
-// console.log(typeof json1)
-
-
-// const json1 = '{"name": "tarun", "age":24, "work":"developer"}'
-// const object1 = JSON.parse(json1)
-// console.log(object1)
-
 // express
 const express = require('express');
 const app = express();
 
 // Database connection
 const db = require('./db');
+const Person = require('./models/person')
 
 // Body parser (using built-in Express middleware)
 app.use(express.json());
 
-//passport and passport-local
+// auth
 const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-app.use(passport.initialize())
+const auth = require('./auth')
 
 //middelware function
 const logrequest = (req, res, next) => {
@@ -122,7 +28,7 @@ app.use('/person', personroutes);
 require('dotenv').config();
 
 //get function
-app.get('/', (req , res) => {
+app.get('/', passport.authenticate('local', { session: false }), (req, res) => {
     res.send('Hello World');
 });
 // app.get('/paneer', function(req,res){
@@ -134,48 +40,6 @@ app.get('/', (req , res) => {
 //     }
 //     res.send(customize_paneer)
 // })
-//post function
-// app.post('/person', async (req, res) => {
-//     try {
-//         const data = req.body
-//         const newPerson = new Person(data)
-//         const response = await newPerson.save()
-//         console.log('data saved')
-//         res.status(200).json(response)
-//     } catch (error) {
-//         res.status(400).send(error)
-//     }
-// })
-
-// //get method
-// app.get('/person', async (req, res) => {
-//     try {
-//         const response = await Person.find()
-//         console.log("data fetched");
-//         res.status(200).json(response)
-//     } catch (error) {
-//         res.status(400).send(error)
-//     }
-// })
-
-
-// app.get('/person/:worktype', async(req, res) => {
-//     try {
-//         const worktype = req.params.worktype
-//         if (worktype == 'backend' || worktype == 'frontend' || worktype == 'fullstack') {
-//           const result = await person.find({work:worktype})
-//           console.log("response fetched");
-//           res.status(200).json(result)
-//         }
-//         else{
-//             res.status(400).send('Invalid worktype')
-//         }
-//     } catch (err) {
-//         res.status(400).send(err)
-
-//     }
-// })
-
 
 // menu item practice of backend
 // const express = require('express');

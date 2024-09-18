@@ -10,8 +10,8 @@ mongoose.connect(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true })
 const db = mongoose.connection;
 
 
-db.on('connected', () => {
-    console.log('Connected to MongoDB');
-});
+// db.on('connected', () => {
+//     console.log('Connected to MongoDB');
+// });
 
 module.exports = db;
