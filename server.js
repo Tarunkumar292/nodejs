@@ -102,6 +102,18 @@ const db = require('./db');
 // Body parser (using built-in Express middleware)
 app.use(express.json());
 
+//passport and passport-local
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+app.use(passport.initialize())
+
+//middelware function
+const logrequest = (req, res, next) => {
+    console.log(`[${new Date().toLocaleString()}] Request made to: ${req.originalUrl}`);
+    next();
+};
+app.use(logrequest)
+
 // Import routes
 const personroutes = require('./routes/personroutes');
 app.use('/person', personroutes);
@@ -110,9 +122,9 @@ app.use('/person', personroutes);
 require('dotenv').config();
 
 //get function
-// app.get('/', function (req, res) {
-//     res.send('Hello World')
-// })
+app.get('/', (req , res) => {
+    res.send('Hello World');
+});
 // app.get('/paneer', function(req,res){
 //     var customize_paneer={
 //         name:"paneer",
