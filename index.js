@@ -25,11 +25,11 @@
 //     return age<18
 // }
 // console.log(res)
-var prompt = require('prompt-sync')();
-let age = prompt("enter your age")
-if(age<18){
-    console.log("you are under age");
-}else{
-    console.log("you are eligable");
+// var prompt = require('prompt-sync')();
+// let age = prompt("enter your age")
+// if(age<18){
+//     console.log("you are under age");
+// }else{
+//     console.log("you are eligable");
     
-}
+// }

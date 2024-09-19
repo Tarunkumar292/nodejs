@@ -1,21 +1,19 @@
 const express = require('express');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const mongoose = require('mongoose');
-const Person = require('./models/person'); // Adjust the path as needed
+const Person = require('./models/person');
 
 const app = express();
 
 // Passport Local Strategy
 passport.use(new LocalStrategy(async (username, password, done) => {
     try {
-        console.log("Received data:", username, password);
         const user = await Person.findOne({ username: username });
         if (!user) {
             return done(null, false, { message: 'Invalid username or password' });
         }
 
-        const isPasswordMatch = user.password === password;
+        const isPasswordMatch = await user.comparepassword(password);
         if (isPasswordMatch) {
             return done(null, user, { message: 'Success' });
         } else {
@@ -30,11 +28,13 @@ passport.use(new LocalStrategy(async (username, password, done) => {
 app.use(passport.initialize());
 
 // Define routes for authentication
-app.post('/login', passport.authenticate('local', {
-    successRedirect: '/success', // Adjust this route as needed
-    failureRedirect: '/login',   // Adjust this route as needed
-    failureFlash: true
-}));
+app.post('/login', (req, res, next) => {
+    passport.authenticate('local', (err, user, info) => {
+        if (err) return next(err);
+        if (!user) return res.status(401).json({ message: info.message });
+        res.status(200).json({ message: 'Login successful', user });
+    })(req, res, next);
+});
 
 // Route to handle successful login
 app.get('/success', (req, res) => {
@@ -46,5 +46,4 @@ app.get('/login', (req, res) => {
     res.send('Login page');
 });
 
-// Export app
 module.exports = app;

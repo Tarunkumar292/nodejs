@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
+const passport = require('passport');
 const Person = require('../models/person');
+
+// Middleware for authentication using Passport.js
+const localAuth = passport.authenticate('local', { session: false });
 
 // POST route for creating a new person
 router.post('/', async (req, res) => {
@@ -16,8 +20,8 @@ router.post('/', async (req, res) => {
     }
 });
 
-// GET route for fetching all persons
-router.get('/', async (req, res) => {
+// GET route for fetching all persons with localAuth middleware
+router.get('/', localAuth, async (req, res) => {
     try {
         const response = await Person.find();
         console.log("Data fetched");
@@ -45,38 +49,40 @@ router.get('/:worktype', async (req, res) => {
     }
 });
 
-router.put('/:id',async(req,res)=>{
-    try{
+// PUT route for updating a person by ID
+router.put('/:id', async (req, res) => {
+    try {
         const id = req.params.id;
         const data = req.body;
         const updatedPerson = await Person.findByIdAndUpdate(id, data, {
             new: true,
-            runValidators:true
+            runValidators: true
         });
-        if(!updatedPerson){
+        if (!updatedPerson) {
             res.status(404).send('Person not found');
         }
         console.log('Data updated');
         res.status(200).json(updatedPerson);
-
-    }catch(err){
+    } catch (err) {
         console.error('Error updating person:', err);
+        res.status(400).send(err);
     }
-})
+});
 
-router.delete('/:id',async(req,res)=>{
-    try{
+// DELETE route for deleting a person by ID
+router.delete('/:id', async (req, res) => {
+    try {
         const id = req.params.id;
         const deletedPerson = await Person.findByIdAndDelete(id);
-        if(!deletedPerson){
+        if (!deletedPerson) {
             res.status(404).send('Person not found');
-            }
-            console.log('Person deleted');
-            res.status(200).send('Person deleted');
         }
-            catch(err){
-                console.error('Error deleting person:', err);
-            }
-})
-//module export
+        console.log('Person deleted');
+        res.status(200).send('Person deleted');
+    } catch (err) {
+        console.error('Error deleting person:', err);
+        res.status(400).send(err);
+    }
+});
+
 module.exports = router;
